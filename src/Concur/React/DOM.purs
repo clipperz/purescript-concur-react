@@ -14,58 +14,26 @@ import React.DOM as D
 
 -- | The React backend uses Array to make view monoidal
 -- | We use this view adapter to derive our specialised `el` functions
-viewAdapter
-  :: forall ps vs res
-  .  (ps -> vs -> res)
-  -> (ps -> vs -> Array res)
+viewAdapter :: forall ps vs res .  (ps -> vs -> res) -> (ps -> vs -> Array res)
 viewAdapter f = \ps vs -> [f ps vs]
 
-el
-  :: forall m a p v
-  .  ShiftMap (Widget (Array v)) m
-  => (Array p -> Array v -> v)
-  -> Array (Props p a)
-  -> m a
-  -> m a
+el :: forall m a p v .  ShiftMap (Widget (Array v)) m => (Array p -> Array v -> v) -> Array (Props p a) -> m a -> m a
 el f = CD.el (viewAdapter f)
 
-el'
-  :: forall m a p v
-  .  ShiftMap (Widget (Array v)) m
-  => MultiAlternative m
-  => (Array p -> Array v -> v)
-  -> Array (Props p a)
-  -> Array (m a)
-  -> m a
+el' :: forall m a p v .  ShiftMap (Widget (Array v)) m => MultiAlternative m => (Array p -> Array v -> v) -> Array (Props p a) -> Array (m a) -> m a
 el' f = CD.el' (viewAdapter f)
 
-elLeaf
-  :: forall p v m a
-  .  LiftWidget (Array v) m
-  => (Array p -> v)
-  -> Array (Props p a)
-  -> m a
+elLeaf :: forall p v m a .  LiftWidget (Array v) m => (Array p -> v) -> Array (Props p a) -> m a
 elLeaf f = CD.elLeaf (\ps -> [f ps])
 
 -- Wrappers for all DOM elements from purescript-react
 -- TODO: Generate these mechanically somehow
-type El1
-  = forall m a. ShiftMap (Widget HTML) m => Array (ReactProps a) -> m a -> m a
-
-type El
-  = forall m a. MultiAlternative m => ShiftMap (Widget HTML) m => Array (ReactProps a) -> Array (m a) -> m a
-
-type El'
-  = forall m a. MultiAlternative m => ShiftMap (Widget HTML) m => Array (m a) -> m a
-
-type ElLeaf
-  = forall m a. LiftWidget HTML m => Array (ReactProps a) -> m a
-
-type ElLeaf'
-  = forall m a. LiftWidget HTML m => m a
-
-type ElLeafFunc' x
-  = forall m a. LiftWidget HTML m => x -> m a
+type El1 = forall m a.                       ShiftMap (Widget HTML) m => Array (ReactProps a) ->        m a  -> m a
+type El  = forall m a. MultiAlternative m => ShiftMap (Widget HTML) m => Array (ReactProps a) -> Array (m a) -> m a
+type El' = forall m a. MultiAlternative m => ShiftMap (Widget HTML) m =>                         Array (m a) -> m a
+type ElLeaf         = forall m a. LiftWidget HTML m => Array (ReactProps a) -> m a
+type ElLeaf'        = forall m a. LiftWidget HTML m =>                         m a
+type ElLeafFunc' x  = forall m a. LiftWidget HTML m => x                    -> m a
 
 -------------------------------------------------------------------------------------------------------------------
 text :: ElLeafFunc' String

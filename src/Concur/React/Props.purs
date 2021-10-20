@@ -34,55 +34,35 @@ emptyProp :: forall a. ReactProps a
 emptyProp = PrimProp emptyProp_
 
 -- | Construct a custom prop handler
-unsafeMkPropHandler ::
-  forall a.
-  String ->
-  ReactProps a
-unsafeMkPropHandler s = Handler \f ->
-  P.unsafeMkProps s (mkEffectFn1 f)
+unsafeMkPropHandler :: forall a. String -> ReactProps a
+unsafeMkPropHandler s = Handler \f -> P.unsafeMkProps s (mkEffectFn1 f)
 
 -- | Construct a custom key value prop
-unsafeMkProp ::
-  forall a b.
-  String ->
-  a ->
-  ReactProps b
+unsafeMkProp :: forall a b. String -> a -> ReactProps b
 unsafeMkProp s v = PrimProp (P.unsafeMkProps s v)
 
 -- | Shortcut for the common case of a list of classes
-classList ::
-  forall a.
-  Array (Maybe String) ->
-  ReactProps a
-classList = className <<< intercalate " " <<< concatMap (maybe [] (\s ->
-  [s]))
+classList :: forall a. Array (Maybe String) -> ReactProps a
+classList = className <<< intercalate " " <<< concatMap (maybe [] (\s -> [s]))
 
 -- FFI + Util stuff
 -- | Get the event target's current value
 -- | HACK: This is brittle thanks to React's event object reuse!
 -- | Safest is to use it directly on the prop like `unsafeTargetValue <$> onKeyDown`
-unsafeTargetValue ::
-  forall r.
-  SyntheticEvent_ r ->
-  String
+unsafeTargetValue :: forall r. SyntheticEvent_ r -> String
 unsafeTargetValue e = (unsafeCoerce e).target.value
 
 -- | Check if a keyboard event was Enter
-isEnterEvent ::
-  SyntheticKeyboardEvent ->
-  Boolean
+isEnterEvent :: SyntheticKeyboardEvent -> Boolean
 isEnterEvent e = e'.which == 13 || e'.keyCode == 13
-  where
-  e' = unsafeCoerce e
+    where
+    e' = unsafeCoerce e
 
 -- | IMPORTANT: UNSAFE: It's unsafe to use this outside this module
 foreign import resetTargetValue :: forall event. String -> event -> Effect Unit
 
 -- The Standard Set of Props
-aria ::
-  forall ariaAttrs a.
-  { | ariaAttrs} ->
-  ReactProps a
+aria :: forall ariaAttrs a. { | ariaAttrs} -> ReactProps a
 aria = PrimProp <<< P.aria
 
 _data :: forall dataAttrs a. { | dataAttrs} -> ReactProps a
@@ -498,10 +478,7 @@ vocab :: forall a. String -> ReactProps a
 vocab = PrimProp <<< P.vocab
 
 -- Non-standard Attributes
-autoCapitalize ::
-  forall a.
-  String ->
-  ReactProps a
+autoCapitalize :: forall a. String -> ReactProps a
 autoCapitalize = PrimProp <<< P.autoCapitalize
 
 autoCorrect :: forall a. String -> ReactProps a
@@ -961,10 +938,7 @@ suppressContentEditableWarning :: forall a. Boolean -> ReactProps a
 suppressContentEditableWarning = PrimProp <<< P.suppressContentEditableWarning
 
 -- SVG attributes
-x ::
-  forall a.
-  Int ->
-  ReactProps a
+x :: forall a. Int -> ReactProps a
 x = PrimProp <<< P.x
 
 y :: forall a. Int -> ReactProps a

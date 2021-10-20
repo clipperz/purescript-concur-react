@@ -33,11 +33,11 @@ runWidgetInSelector elemId = renderWidgetInto (QuerySelector elemId)
 -- | Run a Concur Widget inside a dom element with the specified QuerySelector
 renderWidgetInto :: forall a. QuerySelector -> Widget HTML a -> Effect Unit
 renderWidgetInto query w = runAffX do
-  awaitLoad
-  mroot <- selectElement query
-  case mroot of
-    Nothing -> pure unit
-    Just root -> void $ liftEffect $ ReactDOM.render (renderComponent w) (HTMLElement.toElement root)
+    awaitLoad
+    mroot <- selectElement query
+    case mroot of
+        Nothing -> pure unit
+        Just root -> void $ liftEffect $ ReactDOM.render (renderComponent w) (HTMLElement.toElement root)
 
 -- Attribution - Everything below was taken from Halogen.Aff.Utils
 -- https://github.com/purescript-halogen/purescript-halogen/blob/master/src/Halogen/Aff/Util.purs
@@ -45,30 +45,29 @@ renderWidgetInto query w = runAffX do
 -- | Waits for the document to load.
 awaitLoad :: Aff Unit
 awaitLoad = makeAff \callback -> do
-  rs <- readyState =<< Window.document =<< window
-  case rs of
-    Loading -> do
-      et <- Window.toEventTarget <$> window
-      listener <- eventListener (\_ -> callback (Right unit))
-      addEventListener ET.domcontentloaded listener false et
-      pure $ effectCanceler (removeEventListener ET.domcontentloaded listener false et)
-    _ -> do
-      callback (Right unit)
-      pure nonCanceler
+    rs <- readyState =<< Window.document =<< window
+    case rs of
+        Loading -> do
+            et <- Window.toEventTarget <$> window
+            listener <- eventListener (\_ -> callback (Right unit))
+            addEventListener ET.domcontentloaded listener false et
+            pure $ effectCanceler (removeEventListener ET.domcontentloaded listener false et)
+        _ -> do
+            callback (Right unit)
+            pure nonCanceler
 
 -- | Waits for the document to load and then finds the `body` element.
 awaitBody :: Aff HTMLElement
 awaitBody = do
-  awaitLoad
-  body <- selectElement (QuerySelector "body")
-  maybe (throwError (error "Could not find body")) pure body
+    awaitLoad
+    body <- selectElement (QuerySelector "body")
+    maybe (throwError (error "Could not find body")) pure body
 
 -- | Tries to find an element in the document.
 selectElement :: QuerySelector -> Aff (Maybe HTMLElement)
 selectElement query = do
-  mel <- liftEffect $
-    ((querySelector query <<< HTMLDocument.toParentNode <=< Window.document) =<< window)
-  pure $ HTMLElement.fromElement =<< mel
+    mel <- liftEffect $ ((querySelector query <<< HTMLDocument.toParentNode <=< Window.document) =<< window)
+    pure $ HTMLElement.fromElement =<< mel
 
 -- | Runs an `Aff` value of the type commonly used by Halogen components. Any
 -- | unhandled errors will be re-thrown as exceptions.
