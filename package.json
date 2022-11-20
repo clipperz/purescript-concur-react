@@ -1,6 +1,6 @@
 {
   "name": "purescript-concur-react",
-  "version": "0.3.8",
+  "version": "0.5.0",
   "description": "Concur UI framework for Purescript, React backend",
   "license": "MIT",
   "repository": "purescript-concur/purescript-concur-react",

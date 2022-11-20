@@ -1,29 +1,34 @@
-let mkPackage =
-      https://github.com/purescript/package-sets/releases/download/psc-0.15.2-20220630/packages.dhall
-        sha256:691aff166010760f18ab1f4842ba6184f43747756e00579a050a2a46fa22d014
-
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.15.2-20220630/packages.dhall
-        sha256:691aff166010760f18ab1f4842ba6184f43747756e00579a050a2a46fa22d014
+      https://github.com/purescript/package-sets/releases/download/psc-0.15.4-20221107/packages.dhall
+        sha256:cd0c29e8a69cf70b714ce3ee91c57c02b3d20a1118e35dd8405f33aa80177849
 
-let overrides = { concur-react = ./spago.dhall as Location }
+in upstream
+  with concur-core =
+    { dependencies =
+        [ "aff"
+        , "aff-bus"
+        , "arrays"
+        , "avar"
+        , "console"
+        , "control"
+        , "datetime"
+        , "effect"
+        , "either"
+        , "exceptions"
+        , "foldable-traversable"
+        , "free"
+        , "identity"
+        , "lazy"
+        , "maybe"
+        , "newtype"
+        , "parallel"
+        , "prelude"
+        , "profunctor-lenses"
+        , "tailrec"
+        , "transformers"
+        , "tuples"
+        ]
+    , repo = "https://github.com/clipperz/purescript-concur-core"
+    , version = "clipperz"
+    }
 
-let additions =
-      { concur-core =
-        { dependencies =
-          [ "aff"
-          , "arrays"
-          , "avar"
-          , "console"
-          , "foldable-traversable"
-          , "free"
-          , "nonempty"
-          , "profunctor-lenses"
-          , "tailrec"
-          ]
-        , repo = "https://github.com/purescript-concur/purescript-concur-core"
-        , version = "v0.4.2"
-        }
-      }
-
-in  upstream // overrides // additions
